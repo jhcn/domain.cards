@@ -103,13 +103,13 @@ header {
 .rank {
     @apply size-10 bg-cover text-transparent absolute z-[2] right-2 top-3;
     &.rank-1 {
-        @apply bg-[url(/templates/assets/img/rank-1.svg)]
+        @apply bg-[url(/assets/img/rank-1.svg)]
     }
     &.rank-2 {
-        @apply bg-[url(/templates/assets/img/rank-2.svg)]
+        @apply bg-[url(/assets/img/rank-2.svg)]
     }
     &.rank-3 {
-        @apply bg-[url(/templates/assets/img/rank-3.svg)]
+        @apply bg-[url(/assets/img/rank-3.svg)]
     }
 }
 

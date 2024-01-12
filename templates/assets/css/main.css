@@ -904,13 +904,13 @@ header {
   background-size: cover;
   color: transparent;
   &.rank-1 {
-    background-image: url(/templates/assets/img/rank-1.svg);
+    background-image: url(/assets/img/rank-1.svg);
   }
   &.rank-2 {
-    background-image: url(/templates/assets/img/rank-2.svg);
+    background-image: url(/assets/img/rank-2.svg);
   }
   &.rank-3 {
-    background-image: url(/templates/assets/img/rank-3.svg);
+    background-image: url(/assets/img/rank-3.svg);
   }
 }
 

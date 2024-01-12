@@ -3,3 +3,6 @@ node_modules/
 .font-spider
 *.ttf
 font-compress.html
+/data
+.env
+/target
