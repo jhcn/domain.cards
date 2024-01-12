@@ -3,12 +3,12 @@ use std::time::Duration;
 use std::{collections::HashMap, sync::Arc};
 
 use crate::statistics_model::Statistics;
-use crate::{boring_face::BoringFace, DbPool};
+use crate::DbPool;
 use crate::{now_shanghai, SYSTEM_DOMAIN};
 
 use crate::membership_model::Membership;
 use anyhow::anyhow;
-use axum::http::HeaderMap;
+use axum::http::{HeaderMap, HeaderValue};
 use chrono::{NaiveDateTime, NaiveTime};
 use lazy_static::lazy_static;
 use regex::Regex;
@@ -31,6 +31,7 @@ struct VistEvent {
     country: String,
     member: Membership,
     vt: Option<VisitorType>,
+    referrer: Option<String>,
 }
 
 #[derive(Serialize_repr, Debug, PartialEq, Clone, Copy)]
@@ -39,13 +40,11 @@ pub enum VisitorType {
     Referer = 1,
     Badge = 2,
     ICON = 3,
+    Favicon = 4,
+    Card = 5,
 }
 
 pub struct Context {
-    pub badge: BoringFace,
-    pub favicon: BoringFace,
-    pub icon: BoringFace,
-
     pub db_pool: DbPool,
     pub unique_visitor: RwLock<HashMap<i64, (i64, NaiveDateTime)>>,
     pub referrer: RwLock<HashMap<i64, (i64, NaiveDateTime)>>,
@@ -74,35 +73,70 @@ impl Context {
         tend
     }
 
+    fn get_domain_from_referrer(headers: &HeaderMap) -> Result<String, anyhow::Error> {
+        let referrer_header = headers.get("Referer");
+        if referrer_header.is_none() {
+            return Err(anyhow!("no referrer header"));
+        }
+
+        let referrer_str = String::from_utf8(referrer_header.unwrap().as_bytes().to_vec());
+        if referrer_str.is_err() {
+            return Err(anyhow!("referrer header is not valid utf-8 string"));
+        }
+
+        let referrer_url = url::Url::parse(&referrer_str.unwrap());
+        if referrer_url.is_err() {
+            return Err(anyhow!("referrer header is not valid URL"));
+        }
+
+        let referrer_url = referrer_url.unwrap();
+        if referrer_url.domain().is_none() {
+            return Err(anyhow!("referrer header doesn't contains a valid domain"));
+        }
+
+        return Ok(referrer_url.domain().unwrap().to_string());
+    }
+
     pub async fn boring_visitor(
         &self,
         v_type: Option<VisitorType>,
-        domain: &str,
+        query_member_domain: &str,
         headers: &HeaderMap,
-    ) -> Result<(&str, i64, i64, i64), anyhow::Error> {
-        if v_type.is_some_and(|v| v == VisitorType::Referer) && domain.eq(&*SYSTEM_DOMAIN) {
-            return Err(anyhow!("system domain"));
+    ) -> Result<(Membership, i64, i64, i64), anyhow::Error> {
+        let mut member_domain = query_member_domain.to_string();
+        let domain_referrer = Self::get_domain_from_referrer(&headers).unwrap_or("".to_string());
+        if v_type.is_some_and(|v| v == VisitorType::Referer) {
+            if domain_referrer.eq(&*SYSTEM_DOMAIN) {
+                return Err(anyhow!("system domain"));
+            }
+            member_domain = domain_referrer.clone();
         }
-        if let Some(id) = self.domain2id.get(domain) {
-            let ip =
-                String::from_utf8(headers.get("CF-Connecting-IP").unwrap().as_bytes().to_vec())
-                    .unwrap();
+        if let Some(id) = self.domain2id.get(&member_domain) {
+            let default_header = HeaderValue::from_str("").unwrap();
+            let ip = headers
+                .get("CF-Connecting-IP")
+                .unwrap_or(&default_header)
+                .to_str()
+                .unwrap();
             info!("ip {}", ip);
 
-            let country =
-                String::from_utf8(headers.get("CF-IPCountry").unwrap().as_bytes().to_vec())
-                    .unwrap();
+            let country = headers
+                .get("CF-IPCountry")
+                .unwrap_or(&default_header)
+                .to_str()
+                .unwrap();
             info!("country {}", country);
 
             let visitor_key = format!("{}_{}_{:?}", ip, id, v_type);
-            let visitor_cache = self.cache.get(&visitor_key).await;
+            let mut visitor_cache = self.cache.get(&visitor_key).await;
 
-            if v_type.is_some_and(|v| [VisitorType::Referer, VisitorType::Badge].contains(&v))
-                && visitor_cache.is_none()
-            {
+            if visitor_cache.is_none() {
                 self.cache
                     .set(visitor_key, (), Some(Duration::from_secs(60 * 60 * 4)))
                     .await;
+                if member_domain.ne(&domain_referrer) {
+                    visitor_cache = Some(());
+                }
             }
 
             let mut notification = false;
@@ -127,7 +161,7 @@ impl Context {
                 .get(id)
                 .unwrap_or(&(0, NaiveDateTime::from_timestamp(0, 0)))
                 .to_owned();
-            if v_type.is_some_and(|v| v == VisitorType::Badge) {
+            if v_type.is_some_and(|v| v != VisitorType::Referer) {
                 if visitor_cache.is_none() {
                     dist_uv.0 += 1;
                     dist_uv.1 = now_shanghai();
@@ -144,14 +178,17 @@ impl Context {
                 member.description = "".to_string();
                 member.icon = "".to_string();
                 member.github_username = "".to_string();
-
                 let _ = self.visitor_tx.send(
                     serde_json::json!(VistEvent {
                         ip: IPV6_MASK
                             .replace_all(&IPV4_MASK.replace_all(&ip, "$1****$2"), "$1****$2")
                             .to_string(),
-                        country,
+                        country: country.to_string(),
                         member,
+                        referrer: match domain_referrer.as_str() {
+                            "" => None,
+                            _ => Some(domain_referrer),
+                        },
                         vt: v_type,
                     })
                     .to_string(),
@@ -159,7 +196,7 @@ impl Context {
             }
 
             return Ok((
-                &self.id2member.get(id).unwrap().name,
+                self.id2member.get(id).unwrap().clone(),
                 dist_uv.0,
                 dist_r.0,
                 tend,
@@ -216,9 +253,6 @@ impl Context {
         let rank_svg = Statistics::prev_day_rank_avg(db_pool.get().unwrap());
 
         Context {
-            badge: BoringFace::new("#d0273e".to_string(), "#f5acb9".to_string(), true),
-            favicon: BoringFace::new("#f5acb9".to_string(), "#d0273e".to_string(), false),
-            icon: BoringFace::new("#d0273e".to_string(), "#f5acb9".to_string(), false),
             db_pool,
 
             unique_visitor: RwLock::new(page_view),

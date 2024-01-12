@@ -1,6 +1,5 @@
-use std::{collections::HashMap, sync::Arc, time::Duration};
+use std::{collections::HashMap, io::Read, sync::Arc, time::Duration};
 
-use anyhow::anyhow;
 use askama::Template;
 use axum::{
     extract::{
@@ -10,19 +9,47 @@ use axum::{
     http::{header::HeaderMap, StatusCode},
     response::{Html, IntoResponse, Response},
 };
+use base64::{engine::general_purpose::STANDARD, Engine};
 use chrono::NaiveDateTime;
+use lazy_static::lazy_static;
 use rand::seq::SliceRandom;
 use rand::thread_rng;
 use tokio::select;
 
 use crate::{
-    app_model::{Context, DynContext},
-    boring_face::BoringFace,
+    app_model::{Context, DynContext, VisitorType},
     membership_model::{Membership, RankAndMembership},
     now_shanghai,
     statistics_model::Statistics,
     GIT_HASH,
 };
+
+lazy_static! {
+    static ref BADGE_CONTENT: String = {
+        let mut s = String::new();
+        std::fs::File::open("templates/assets/img/badge.svg")
+            .unwrap()
+            .read_to_string(&mut s)
+            .unwrap();
+        s
+    };
+    static ref CARD_CONTENT: String = {
+        let mut s = String::new();
+        std::fs::File::open("templates/assets/img/card.svg")
+            .unwrap()
+            .read_to_string(&mut s)
+            .unwrap();
+        s
+    };
+    static ref ICON_CONTENT: String = {
+        let mut s = String::new();
+        std::fs::File::open("templates/assets/img/logo.svg")
+            .unwrap()
+            .read_to_string(&mut s)
+            .unwrap();
+        s
+    };
+}
 
 pub async fn ws_upgrade(
     Extension(ctx): Extension<DynContext>,
@@ -55,41 +82,12 @@ async fn handle_socket(ctx: Arc<Context>, mut socket: WebSocket) {
 }
 
 pub async fn show_badge(
-    Path(mut domain): Path<String>,
-    headers: HeaderMap,
-    Extension(ctx): Extension<DynContext>,
-) -> Response {
-    let mut v_type = Some(crate::app_model::VisitorType::Badge);
-
-    let domain_referrer = get_domain_from_referrer(&headers).unwrap_or("".to_string());
-    if domain_referrer.ne(&domain) {
-        if domain.eq("[domain]") {
-            domain = domain_referrer;
-        } else {
-            v_type = None;
-        }
-    }
-
-    let tend = ctx.boring_visitor(v_type, &domain, &headers).await;
-    if tend.is_err() {
-        return (
-            StatusCode::NOT_FOUND,
-            ([("content-type", "text/plain")]),
-            tend.err().unwrap().to_string(),
-        )
-            .into_response();
-    }
-
-    render_svg(tend.unwrap(), &ctx.badge).await
-}
-
-pub async fn show_favicon(
     Path(domain): Path<String>,
     headers: HeaderMap,
     Extension(ctx): Extension<DynContext>,
 ) -> Response {
     let tend = ctx
-        .boring_visitor(Some(crate::app_model::VisitorType::ICON), &domain, &headers)
+        .boring_visitor(Some(VisitorType::Badge), &domain, &headers)
         .await;
     if tend.is_err() {
         return (
@@ -99,7 +97,84 @@ pub async fn show_favicon(
         )
             .into_response();
     }
-    render_svg(tend.unwrap(), &ctx.favicon).await
+
+    let tend = tend.unwrap();
+
+    (
+        StatusCode::OK,
+        [("content-type", "image/svg+xml")],
+        BADGE_CONTENT
+            .replace("domain.fans", &tend.0.domain)
+            .replace("1233", &tend.1.to_string())
+            .replace("1244", &tend.2.to_string())
+            .replace("1255", &tend.3.to_string()),
+    )
+        .into_response()
+}
+
+pub async fn show_card(
+    Path(domain): Path<String>,
+    headers: HeaderMap,
+    Extension(ctx): Extension<DynContext>,
+) -> Response {
+    let tend = ctx
+        .boring_visitor(Some(VisitorType::Card), &domain, &headers)
+        .await;
+    if tend.is_err() {
+        return (
+            StatusCode::NOT_FOUND,
+            ([("content-type", "text/plain")]),
+            tend.err().unwrap().to_string(),
+        )
+            .into_response();
+    }
+
+    let tend = tend.unwrap();
+
+    let avatar_img = std::fs::read(format!("resources/{}.png", &tend.0.id)).unwrap();
+    let avatar_img_base64 = STANDARD.encode(&avatar_img);
+
+    (
+        StatusCode::OK,
+        [("content-type", "image/svg+xml")],
+        CARD_CONTENT
+            .replace("iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII", &avatar_img_base64)
+            .replace("熊宝的米表", &tend.0.name)
+            .replace("资深域名玩家，擅长新顶、单字符等。", &tend.0.description)
+            .replace("domain.fans", &tend.0.domain)
+            .replace("1233", &tend.1.to_string())
+            .replace("1244", &tend.2.to_string())
+            .replace("1255", &tend.3.to_string()),
+    )
+        .into_response()
+}
+
+pub async fn show_favicon(
+    Path(domain): Path<String>,
+    headers: HeaderMap,
+    Extension(ctx): Extension<DynContext>,
+) -> Response {
+    let tend = ctx
+        .boring_visitor(
+            Some(crate::app_model::VisitorType::Favicon),
+            &domain,
+            &headers,
+        )
+        .await;
+    if tend.is_err() {
+        return (
+            StatusCode::NOT_FOUND,
+            ([("content-type", "text/plain")]),
+            tend.err().unwrap().to_string(),
+        )
+            .into_response();
+    }
+    (
+        StatusCode::OK,
+        [("content-type", "image/svg+xml")],
+        ICON_CONTENT.to_string(),
+    )
+        .into_response()
 }
 
 pub async fn show_icon(
@@ -111,15 +186,14 @@ pub async fn show_icon(
         .boring_visitor(Some(crate::app_model::VisitorType::ICON), &domain, &headers)
         .await;
     if tend.is_err() {
-        return (
-            StatusCode::NOT_FOUND,
-            ([("content-type", "text/plain")]),
-            tend.err().unwrap().to_string(),
-        )
-            .into_response();
+        return (StatusCode::NOT_FOUND, tend.err().unwrap().to_string()).into_response();
     }
-
-    render_svg(tend.unwrap(), &ctx.icon).await
+    (
+        StatusCode::OK,
+        [("content-type", "image/svg+xml")],
+        ICON_CONTENT.to_string(),
+    )
+        .into_response()
 }
 
 #[derive(Template)]
@@ -136,16 +210,9 @@ pub async fn home_page(
     Query(query): Query<HashMap<String, String>>,
     headers: HeaderMap,
 ) -> Result<Html<String>, String> {
-    let domain = get_domain_from_referrer(&headers);
-    if domain.is_ok() {
-        let _ = ctx
-            .boring_visitor(
-                Some(crate::app_model::VisitorType::Referer),
-                &domain.unwrap(),
-                &headers,
-            )
-            .await;
-    }
+    let _ = ctx
+        .boring_visitor(Some(crate::app_model::VisitorType::Referer), "", &headers)
+        .await;
 
     let mut rank_type = query
         .get("rank_type")
@@ -287,16 +354,9 @@ pub async fn rank_page(
     Extension(ctx): Extension<DynContext>,
     headers: HeaderMap,
 ) -> Result<Html<String>, String> {
-    let domain = get_domain_from_referrer(&headers);
-    if domain.is_ok() {
-        let _ = ctx
-            .boring_visitor(
-                Some(crate::app_model::VisitorType::Referer),
-                &domain.unwrap(),
-                &headers,
-            )
-            .await;
-    }
+    let _ = ctx
+        .boring_visitor(Some(crate::app_model::VisitorType::Referer), "", &headers)
+        .await;
 
     let rank = ctx.rank.read().await.to_owned();
 
@@ -329,37 +389,4 @@ pub async fn rank_page(
     };
     let html = tpl.render().map_err(|err| err.to_string())?;
     Ok(Html(html))
-}
-
-fn get_domain_from_referrer(headers: &HeaderMap) -> Result<String, anyhow::Error> {
-    let referrer_header = headers.get("Referer");
-    if referrer_header.is_none() {
-        return Err(anyhow!("no referrer header"));
-    }
-
-    let referrer_str = String::from_utf8(referrer_header.unwrap().as_bytes().to_vec());
-    if referrer_str.is_err() {
-        return Err(anyhow!("referrer header is not valid utf-8 string"));
-    }
-
-    let referrer_url = url::Url::parse(&referrer_str.unwrap());
-    if referrer_url.is_err() {
-        return Err(anyhow!("referrer header is not valid URL"));
-    }
-
-    let referrer_url = referrer_url.unwrap();
-    if referrer_url.domain().is_none() {
-        return Err(anyhow!("referrer header doesn't contains a valid domain"));
-    }
-
-    return Ok(referrer_url.domain().unwrap().to_string());
-}
-
-async fn render_svg(tend: (&str, i64, i64, i64), render: &BoringFace) -> Response {
-    (
-        StatusCode::OK,
-        ([("content-type", "image/svg+xml")]),
-        render.render_svg(tend.0, tend.1, tend.2, tend.3),
-    )
-        .into_response()
 }

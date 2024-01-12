@@ -1,16 +1,17 @@
 use axum::{extract::Extension, routing::get, Router};
 use chrono::{NaiveDateTime, NaiveTime};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
-use dotenv::dotenv;
 use domaincards::{
     app_model::{Context, DynContext},
     app_router::{
-        home_page, join_us_page, rank_page, show_badge, show_favicon, show_icon, ws_upgrade,
+        home_page, join_us_page, rank_page, show_badge, show_card, show_favicon, show_icon,
+        ws_upgrade,
     },
     establish_connection, now_shanghai,
     statistics_model::Statistics,
     DbPool,
 };
+use dotenv::dotenv;
 use std::{env, net::SocketAddr, sync::Arc};
 use tokio::signal;
 use tower_http::services::ServeDir;
@@ -50,6 +51,7 @@ async fn main() {
             "/api",
             Router::new()
                 .route("/badge/:domain", get(show_badge))
+                .route("/card/:domain", get(show_card))
                 .route("/favicon/:domain", get(show_favicon))
                 .route("/icon/:domain", get(show_icon))
                 .route("/ws", get(ws_upgrade)),

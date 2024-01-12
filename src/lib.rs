@@ -10,7 +10,6 @@ use lazy_static::lazy_static;
 
 pub mod app_model;
 pub mod app_router;
-pub mod boring_face;
 pub mod membership_model;
 pub mod schema;
 pub mod statistics_model;

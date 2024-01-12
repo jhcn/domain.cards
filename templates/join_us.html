@@ -41,8 +41,12 @@
           <span class="step-num">1</span>
           <span class="step-txt">第一步</span>
         </h3>
-        <p class="step-detail">在 <a class="inline-link" href="">这里</a> 修改 <code
-            class="inline-code">resources/membership.json</code>，将你的站点添加进去；</p>
+        <p class="step-detail">在 <a class="inline-link"
+            href="https://github.com/xiongbao/domain.cards/blob/main/resources/">这里</a> 修改 <code
+            class="inline-code">resources/membership.json</code>，将你的站点添加进去；
+          <br>
+          同时将你的头像 <code class="inline-code">[id].png</code>，上传到 <code class="inline-code">resources</code> 文件夹。
+        </p>
       </div>
       <div class="step-item">
         <h3 class="step-hd">
@@ -63,9 +67,9 @@
     </h2>
     <div class="input-form">
       <div class="input-feild">
-        <input type="text" placeholder="请输入你的米表域名">
+        <input id="your-domain" type="text" placeholder="请输入你的米表域名">
       </div>
-      <button class="btn-link">
+      <button onclick="getYourCode()" class="btn-link">
         <span class="btn-text">获取代码</span>
       </button>
     </div>
@@ -79,7 +83,7 @@
             href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
             src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
-            <button class="btn-copy">
+            <button class="btn-copy" onclick="copyToClipboard('icon')">
               <svg class="size-4" viewBox="0 0 24 24">
                 <path
                   d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
@@ -97,9 +101,9 @@
         <div class="badge-detail">
           <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
             href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
-            src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+            src=&quot;https://domain.cards/api/badge/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
-            <button class="btn-copy">
+            <button class="btn-copy" onclick="copyToClipboard('badge')">
               <svg class="size-4" viewBox="0 0 24 24">
                 <path
                   d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
@@ -117,9 +121,9 @@
         <div class="badge-detail">
           <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
             href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
-            src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+            src=&quot;https://domain.cards/api/card/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
-            <button class="btn-copy">
+            <button class="btn-copy" onclick="copyToClipboard('card')">
               <svg class="size-4" viewBox="0 0 24 24">
                 <path
                   d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
@@ -166,6 +170,43 @@
       </p>
     </footer>
   </div>
+  <script>
+    const iconElement = document.querySelector('.badge-item:nth-child(1) .badge-show img');
+    const badgeElement = document.querySelector('.badge-item:nth-child(2) .badge-show img');
+    const cardElement = document.querySelector('.badge-item:nth-child(3) .badge-show img');
+    const iconCodeElement = document.querySelector('.badge-item:nth-child(1) .badge-code');
+    const badgeCodeElement = document.querySelector('.badge-item:nth-child(2) .badge-code');
+    const cardCodeElement = document.querySelector('.badge-item:nth-child(3) .badge-code');
+    const iconCodeDefault = iconCodeElement.innerHTML;
+    const badgeCodeDefault = badgeCodeElement.innerHTML;
+    const cardCodeDefault = cardCodeElement.innerHTML;
+    function getYourCode() {
+      let domain = document.getElementById('your-domain').value;
+      if (domain === '') {
+        alert('请输入你的米表域名');
+        return;
+      }
+      iconElement.src = `/api/icon/${domain}`;
+      badgeElement.src = `/api/badge/${domain}`;
+      cardElement.src = `/api/card/${domain}`;
+      iconCodeElement.innerHTML = iconCodeDefault.replace('[domain]', domain);
+      badgeCodeElement.innerHTML = badgeCodeDefault.replace('[domain]', domain);
+      cardCodeElement.innerHTML = cardCodeDefault.replace('[domain]', domain);
+    }
+    function copyToClipboard(type) {
+      let codeElement = type === 'icon' ? iconCodeElement : type === 'badge' ? badgeCodeElement : cardCodeElement;
+      let code = codeElement.innerHTML;
+      let input = document.createElement('input');
+      input.setAttribute('readonly', 'readonly');
+      input.setAttribute('value', code);
+      document.body.appendChild(input);
+      input.select();
+      input.setSelectionRange(0, 9999);
+      document.execCommand('copy');
+      document.body.removeChild(input);
+      alert('复制成功');
+    }
+  </script>
 </body>
 
 </html>
