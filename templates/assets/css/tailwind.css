@@ -183,3 +183,59 @@ footer {
 .copyright {
     @apply py-6 mt-10 text-xs text-center text-gray-500;
 }
+
+.steps {
+    @apply flex gap-8 sm:flex-col;
+}
+.step-item {
+    @apply flex-1 p-5 border-[0.5px] border-black/10 rounded-bento shadow-bento;
+}
+.step-hd {
+    @apply flex items-center gap-2 text-2xl;
+}
+.step-num {
+    @apply flex justify-center items-center size-8 bg-white border-[0.5px] shadow-bento border-black/10 rounded-md text-xl;
+}
+.step-detail {
+    @apply mt-5 text-lg;
+}
+.inline-link {
+    @apply text-blue-600 hover:underline;
+}
+.inline-code {
+    @apply px-1 bg-gray-100 border rounded border-black/10 font-code;
+}
+.badges {
+    @apply grid grid-cols-3 gap-8 md:grid-cols-1;
+}
+.badge-item {
+    @apply flex flex-col flex-1 h-96 shadow-bento border-[0.5px] border-black/10 hover:border-black/20 rounded-bento bg-white;
+}
+.badge-show {
+    @apply flex items-center justify-center flex-1;
+}
+.badge-detail {
+    @apply flex flex-col gap-5 border-t-[0.5px] border-black/10 bg-slate-50 p-5 rounded-b-bento;
+}
+.badge-code {
+    @apply w-full p-3 text-xs bg-white border-[0.5px] rounded-lg font-code border-black/10;
+}
+.btn-copy {
+    @apply flex items-center justify-center h-9 gap-1 px-5 text-sm bg-white border rounded border-black/10 hover:bg-[#f3f4f6];
+}
+.badge-item .actions {
+    @apply flex justify-center;
+}
+
+.input-form {
+    @apply flex gap-5 items-center p-5 border-[0.5px] border-black/10 rounded-bento shadow-bento mb-8;
+}
+.input-form .input-feild {
+    @apply flex-1;
+}
+.input-form input {
+    @apply w-full h-10 px-4 border-2 rounded-lg border-black/10;
+}
+.input-form .btn-link {
+    @apply flex justify-center h-10 leading-10 min-w-40;
+}

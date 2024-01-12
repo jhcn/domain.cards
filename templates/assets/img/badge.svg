@@ -30,7 +30,7 @@
       .frame {fill: #232323;}
       .logo-frame {fill: #81FF7E;}
       .logo-core {fill: black;}
-      .black {fill: #D3D3D3;}
+      .black {fill: #D3D3D3;color: #d3d3d3;}
     }
   </style>
 </svg>
