@@ -209,10 +209,10 @@ footer {
     @apply grid grid-cols-3 gap-8 md:grid-cols-1;
 }
 .badge-item {
-    @apply flex flex-col flex-1 h-96 shadow-bento border-[0.5px] border-black/10 hover:border-black/20 rounded-bento bg-white;
+    @apply flex flex-col flex-1 shadow-bento border-[0.5px] border-black/10 hover:border-black/20 rounded-bento bg-white;
 }
 .badge-show {
-    @apply flex items-center justify-center flex-1;
+    @apply flex items-center justify-center flex-1 py-5;
 }
 .badge-detail {
     @apply flex flex-col gap-5 border-t-[0.5px] border-black/10 bg-slate-50 p-5 rounded-b-bento;

@@ -1161,7 +1161,6 @@ footer {
 
 .badge-item {
   display: flex;
-  height: 24rem;
   flex: 1 1 0%;
   flex-direction: column;
   border-radius: 1.25rem;
@@ -1183,6 +1182,8 @@ footer {
   flex: 1 1 0%;
   align-items: center;
   justify-content: center;
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
 }
 
 .badge-detail {
