@@ -4,7 +4,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="携手同行，共创未来，让每个域名都能找到最适合的主人。">
   <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
   <title>Domain.Cards 米表联盟</title>
 </head>
 
@@ -19,7 +21,7 @@
             <path class="icon-core"
               d="M22.857 22.8a4 4 0 1 1-.058-5.656l5.657-5.658A11.962 11.962 0 0 0 20 8C13.373 8 8 13.373 8 20s5.373 12 12 12c3.328 0 6.34-1.355 8.514-3.544L22.857 22.8Z" />
           </svg>
-          <span class="logo-text">米表联盟</span>
+          <span class="logo-text">米<span>表联</span>盟</span>
         </a>
       </h1>
     </header>
@@ -42,7 +44,7 @@
           <span class="step-txt">第一步</span>
         </h3>
         <p class="step-detail">在 <a class="inline-link"
-            href="https://github.com/xiongbao/domain.cards/blob/main/resources/">这里</a> 修改 <code
+            href="https://github.com/xiongbao/domain.cards/edit/main/resources/membership.json" target="_blank">这里</a> 修改 <code
             class="inline-code">resources/membership.json</code>，将你的站点添加进去；
           <br>
           同时将你的头像 <code class="inline-code">[id].png</code>，上传到 <code class="inline-code">resources</code> 文件夹。
@@ -79,9 +81,7 @@
           <img src="/assets/img/logo.svg" alt="">
         </div>
         <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
-            href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
-            src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
             <button class="btn-copy" onclick="copyToClipboard('icon')">
               <svg class="size-4" viewBox="0 0 24 24">
@@ -99,9 +99,7 @@
           <img src="/assets/img/badge.svg" alt="">
         </div>
         <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
-            href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
-            src=&quot;https://domain.cards/api/badge/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/badge/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
             <button class="btn-copy" onclick="copyToClipboard('badge')">
               <svg class="size-4" viewBox="0 0 24 24">
@@ -119,9 +117,7 @@
           <img width="80%" src="/assets/img/card.svg" alt="">
         </div>
         <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
-            href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
-            src=&quot;https://domain.cards/api/card/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/card/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
           <div class="actions">
             <button class="btn-copy" onclick="copyToClipboard('card')">
               <svg class="size-4" viewBox="0 0 24 24">
@@ -193,9 +189,16 @@
       badgeCodeElement.innerHTML = badgeCodeDefault.replace('[domain]', domain);
       cardCodeElement.innerHTML = cardCodeDefault.replace('[domain]', domain);
     }
+    function HTMLDecode(text) { 
+      var temp = document.createElement("div"); 
+      temp.innerHTML = text; 
+      var output = temp.innerText || temp.textContent; 
+      temp = null; 
+      return output; 
+    }
     function copyToClipboard(type) {
       let codeElement = type === 'icon' ? iconCodeElement : type === 'badge' ? badgeCodeElement : cardCodeElement;
-      let code = codeElement.innerHTML;
+      let code = HTMLDecode(codeElement.innerHTML);
       let input = document.createElement('input');
       input.setAttribute('readonly', 'readonly');
       input.setAttribute('value', code);
