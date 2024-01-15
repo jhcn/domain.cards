@@ -32,6 +32,7 @@ tokio = { version = "1.0", features = ["full"] }
 tower-http = { version = "0.5.0", features = ["fs"] }
 tracing = "0.1"
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+unicode-width = "0.1.11"
 url = "2.2.2"
 
 [dependencies.libsqlite3-sys]

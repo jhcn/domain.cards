@@ -49,6 +49,10 @@ lazy_static! {
             .unwrap();
         s
     };
+    static ref CARD_DOMAIN_UNICODE_WIDTH: usize =
+        unicode_width::UnicodeWidthStr::width("bigtoyscompany");
+    static ref BADGE_DOMAIN_UNICODE_WIDTH: usize =
+        unicode_width::UnicodeWidthStr::width("bigtoyscompa");
 }
 
 pub async fn ws_upgrade(
@@ -100,11 +104,16 @@ pub async fn show_badge(
 
     let tend = tend.unwrap();
 
+    let domain = tend.0.domain.clone();
+    let domain_unicode_width = unicode_width::UnicodeWidthStr::width(domain.as_str());
+    let font_size = (14 * BADGE_DOMAIN_UNICODE_WIDTH.to_owned() / domain_unicode_width).min(14);
+
     (
         StatusCode::OK,
         [("content-type", "image/svg+xml")],
         BADGE_CONTENT
-            .replace("domain.fans", &tend.0.domain)
+            .replace("domain.fans", &domain)
+            .replace("font-size:14px;", &format!("font-size:{}px;", font_size))
             .replace("1233", &tend.1.to_string())
             .replace("1244", &tend.2.to_string())
             .replace("1255", &tend.3.to_string()),
@@ -130,6 +139,9 @@ pub async fn show_card(
     }
 
     let tend = tend.unwrap();
+    let domain = tend.0.domain.clone();
+    let domain_unicode_width = unicode_width::UnicodeWidthStr::width(domain.as_str());
+    let font_size = (36 * CARD_DOMAIN_UNICODE_WIDTH.to_owned() / domain_unicode_width).min(36);
 
     let avatar_img_base64 = match std::fs::read(format!("resources/avatar/{}.png", &tend.0.id)) {
         Ok(img) => STANDARD.encode(img),
@@ -145,7 +157,8 @@ pub async fn show_card(
             .replace("iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII", &avatar_img_base64)
             .replace("熊宝的米表", &tend.0.name)
             .replace("资深域名玩家，擅长新顶、单字符等。", &tend.0.description)
-            .replace("domain.fans", &tend.0.domain)
+            .replace("domain.fans", &domain)
+            .replace("font-size: 36px;", &format!("font-size: {}px;", font_size))
             .replace("1233", &tend.1.to_string())
             .replace("1244", &tend.2.to_string())
             .replace("1255", &tend.3.to_string()),
