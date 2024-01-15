@@ -176,7 +176,6 @@ impl Context {
             if notification {
                 let mut member = self.id2member.get(id).unwrap().to_owned();
                 member.description = "".to_string();
-                member.icon = "".to_string();
                 member.github_username = "".to_string();
                 let _ = self.visitor_tx.send(
                     serde_json::json!(VistEvent {

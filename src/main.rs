@@ -1,4 +1,4 @@
-use axum::{extract::Extension, routing::get, Router};
+use axum::{extract::Extension, http, routing::get, Router};
 use chrono::{NaiveDateTime, NaiveTime};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use domaincards::{
@@ -14,7 +14,7 @@ use domaincards::{
 use dotenv::dotenv;
 use std::{env, net::SocketAddr, sync::Arc};
 use tokio::signal;
-use tower_http::services::ServeDir;
+use tower_http::services::{ServeDir, ServeFile};
 
 pub const MIGRATIONS: EmbeddedMigrations = embed_migrations!("./migrations/");
 
@@ -45,6 +45,7 @@ async fn main() {
     let ctx_clone_for_shutdown = context.clone();
 
     let asset_dir = ServeDir::new("templates/assets");
+    let avatar_dir = ServeDir::new("resources/avatar");
 
     let app = Router::new()
         .nest(
@@ -59,6 +60,10 @@ async fn main() {
         .route("/", get(home_page))
         .route("/join-us", get(join_us_page))
         .route("/rank", get(rank_page))
+        .nest_service(
+            "/avatar",
+            avatar_dir.not_found_service(ServeFile::new("templates/assets/img/logo.svg")),
+        )
         .nest_service("/assets", asset_dir)
         .layer(Extension(context));
 

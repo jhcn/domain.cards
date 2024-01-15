@@ -1,215 +1,150 @@
-<!doctype html>
-<html>
+{% extends "base.html" %}
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="携手同行，共创未来，让每个域名都能找到最适合的主人。">
-  <link rel="stylesheet" href="/assets/css/main.css">
-  <link rel="icon" type="image/svg+xml" href="/assets/img/logo.svg">
-  <title>Domain.Cards 米表联盟</title>
-</head>
+{% block title %}加入我们{% endblock %}
 
-<body>
-  <div class="wrap">
-    <header>
-      <h1>
-        <a class="logo" href="/">
-          <svg class="logo-icon" viewBox="0 0 40 40">
-            <path class="icon-frame"
-              d="M20 40c11.046 0 20-8.954 20-20S31.046 0 20 0H5a5 5 0 0 0-5 5v30a5 5 0 0 0 5 5h15Z" />
-            <path class="icon-core"
-              d="M22.857 22.8a4 4 0 1 1-.058-5.656l5.657-5.658A11.962 11.962 0 0 0 20 8C13.373 8 8 13.373 8 20s5.373 12 12 12c3.328 0 6.34-1.355 8.514-3.544L22.857 22.8Z" />
-          </svg>
-          <span class="logo-text">米<span>表联</span>盟</span>
-        </a>
-      </h1>
-    </header>
-    <h2 class="px-5 mb-8 mod-hd">
-      <div class="mod-icon">
-        <svg class="size-6" viewBox="0 0 24 24">
-          <path
-            d="M9,14c1.381,0,2.631-0.56,3.536-1.465C13.44,11.631,14,10.381,14,9s-0.56-2.631-1.464-3.535C11.631,4.56,10.381,4,9,4  S6.369,4.56,5.464,5.465C4.56,6.369,4,7.619,4,9s0.56,2.631,1.464,3.535C6.369,13.44,7.619,14,9,14z" />
-          <path d="M9,21c3.518,0,6-1,6-2c0-2-2.354-4-6-4c-3.75,0-6,2-6,4C3,20,5.25,21,9,21z" />
-          <path
-            d="M21,12h-2v-2c0-0.553-0.447-1-1-1s-1,0.447-1,1v2h-2c-0.553,0-1,0.447-1,1s0.447,1,1,1h2v2c0,0.553,0.447,1,1,1s1-0.447,1-1  v-2h2c0.553,0,1-0.447,1-1S21.553,12,21,12z" />
-        </svg>
-      </div>
-      <span class="mod-text">加入我们</span>
-    </h2>
-    <div class="steps">
-      <div class="step-item">
-        <h3 class="step-hd">
-          <span class="step-num">1</span>
-          <span class="step-txt">第一步</span>
-        </h3>
-        <p class="step-detail">在 <a class="inline-link"
-            href="https://github.com/xiongbao/domain.cards/edit/main/resources/membership.json" target="_blank">这里</a> 修改 <code
-            class="inline-code">resources/membership.json</code>，将你的站点添加进去；
-          <br>
-          同时将你的头像 <code class="inline-code">[id].png</code>，上传到 <code class="inline-code">resources</code> 文件夹。
-        </p>
-      </div>
-      <div class="step-item">
-        <h3 class="step-hd">
-          <span class="step-num">2</span>
-          <span class="step-txt">第二步</span>
-        </h3>
-        <p class="step-detail">将联盟的 Badge 添加至您站点的底部。</p>
-      </div>
-    </div>
-    <h2 class="px-5 mt-10 mb-8 mod-hd">
-      <div class="mod-icon">
-        <svg class="size-5" viewBox="0 0 24 24">
-          <path
-            d="M12.9,2.6l2.3,5c0.1,0.3,0.4,0.5,0.7,0.6l5.2,0.8C22,9,22.3,10,21.7,10.6l-3.8,3.9c-0.2,0.2-0.3,0.6-0.3,0.9   l0.9,5.4c0.1,0.8-0.7,1.5-1.4,1.1l-4.7-2.6c-0.3-0.2-0.6-0.2-0.9,0l-4.7,2.6c-0.7,0.4-1.6-0.2-1.4-1.1l0.9-5.4   c0.1-0.3-0.1-0.7-0.3-0.9l-3.8-3.9C1.7,10,2,9,2.8,8.9l5.2-0.8c0.3,0,0.6-0.3,0.7-0.6l2.3-5C11.5,1.8,12.5,1.8,12.9,2.6z" />
-        </svg>
-      </div>
-      <span class="mod-text">选择Badge</span>
-    </h2>
-    <div class="input-form">
-      <div class="input-feild">
-        <input id="your-domain" type="text" placeholder="请输入你的米表域名">
-      </div>
-      <button onclick="getYourCode()" class="btn-link">
-        <span class="btn-text">获取代码</span>
-      </button>
-    </div>
-    <div class="badges">
-      <div class="badge-item">
-        <div class="badge-show">
-          <img src="/assets/img/logo.svg" alt="">
-        </div>
-        <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
-          <div class="actions">
-            <button class="btn-copy" onclick="copyToClipboard('icon')">
-              <svg class="size-4" viewBox="0 0 24 24">
-                <path
-                  d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
-                <path d="M6 12h6v2H6zm0 4h6v2H6z" />
-              </svg>
-              <span>复制代码</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="badge-item">
-        <div class="badge-show">
-          <img src="/assets/img/badge.svg" alt="">
-        </div>
-        <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/badge/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
-          <div class="actions">
-            <button class="btn-copy" onclick="copyToClipboard('badge')">
-              <svg class="size-4" viewBox="0 0 24 24">
-                <path
-                  d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
-                <path d="M6 12h6v2H6zm0 4h6v2H6z" />
-              </svg>
-              <span>复制代码</span>
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="badge-item">
-        <div class="badge-show">
-          <img width="80%" src="/assets/img/card.svg" alt="">
-        </div>
-        <div class="badge-detail">
-          <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot; href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot; src=&quot;https://domain.cards/api/card/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
-          <div class="actions">
-            <button class="btn-copy" onclick="copyToClipboard('card')">
-              <svg class="size-4" viewBox="0 0 24 24">
-                <path
-                  d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
-                <path d="M6 12h6v2H6zm0 4h6v2H6z" />
-              </svg>
-              <span>复制代码</span>
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-    <footer>
-      <h2 class="mod-hd mod-team-hd">
-        <div class="mod-icon">
-          <svg class="h-6" viewBox="-91 49.217 56.693 56.693">
-            <path
-              d="M-38.329 79.824a4.272 4.272 0 0 0-5.412-2.686l-4.535 1.527-3.073-9.132 4.416-1.487a4.272 4.272 0 1 0-2.725-8.098l-4.417 1.487-1.488-4.42a4.272 4.272 0 1 0-8.098 2.726l1.488 4.42-9.324 3.138-1.47-4.367a4.272 4.272 0 1 0-8.098 2.726l1.47 4.366-4.445 1.497a4.272 4.272 0 1 0 2.726 8.098l4.444-1.497 3.074 9.132-4.327 1.457a4.272 4.272 0 1 0 2.726 8.097l4.327-1.456 1.578 4.688a4.272 4.272 0 1 0 8.097-2.726l-1.577-4.687 9.324-3.139 1.56 4.634a4.272 4.272 0 1 0 8.098-2.725l-1.56-4.635 4.535-1.526a4.272 4.272 0 0 0 2.686-5.412zm-27.37 4.705-3.073-9.132 9.325-3.139 3.073 9.132-9.324 3.139z" />
-          </svg>
-        </div>
-        <span class="mod-text">团队</span>
-      </h2>
-      <div class="team-members">
-        <a href="https://boring.studio/" class="member-item">
-          <div class="avatar">
-            <img class="img" src="/assets/img/xiong.jpg" alt="">
-          </div>
-          <div class="member-infos">
-            <h4 class="member-name">熊宝</h4>
-            <p class="member-title">Designer</p>
-          </div>
-        </a>
-        <a href="https://lifelonglearn.ing" class="member-item">
-          <div class="avatar">
-            <img class="img" src="/assets/img/naiba.jpg" alt="">
-          </div>
-          <div class="member-infos">
-            <h4 class="member-name">奶爸</h4>
-            <p class="member-title">Developer</p>
-          </div>
-        </a>
-      </div>
-      <p class="copyright">build · <a class="text-reset" target="_blank"
-          href="https://github.com/xiongbao/domain.cards/commit/{{version}}">{{version}}</a> &copy;2024 Domain.cards
-      </p>
-    </footer>
+{% block content %}
+<div class="steps">
+  <div class="step-item">
+    <h3 class="step-hd">
+      <span class="step-num">1</span>
+      <span class="step-txt">第一步</span>
+    </h3>
+    <p class="step-detail">在 <a class="inline-link"
+        href="https://github.com/xiongbao/domain.cards/edit/main/resources/membership.json" target="_blank">这里</a> 修改
+      <code class="inline-code">resources/membership.json</code>，将你的站点添加进去；
+      <br>
+      同时将你的头像 <code class="inline-code">[id].png</code>，上传到 <code class="inline-code">resources</code> 文件夹。
+    </p>
   </div>
-  <script>
-    const iconElement = document.querySelector('.badge-item:nth-child(1) .badge-show img');
-    const badgeElement = document.querySelector('.badge-item:nth-child(2) .badge-show img');
-    const cardElement = document.querySelector('.badge-item:nth-child(3) .badge-show img');
-    const iconCodeElement = document.querySelector('.badge-item:nth-child(1) .badge-code');
-    const badgeCodeElement = document.querySelector('.badge-item:nth-child(2) .badge-code');
-    const cardCodeElement = document.querySelector('.badge-item:nth-child(3) .badge-code');
-    const iconCodeDefault = iconCodeElement.innerHTML;
-    const badgeCodeDefault = badgeCodeElement.innerHTML;
-    const cardCodeDefault = cardCodeElement.innerHTML;
-    function getYourCode() {
-      let domain = document.getElementById('your-domain').value;
-      if (domain === '') {
-        alert('请输入你的米表域名');
-        return;
-      }
-      iconElement.src = `/api/icon/${domain}`;
-      badgeElement.src = `/api/badge/${domain}`;
-      cardElement.src = `/api/card/${domain}`;
-      iconCodeElement.innerHTML = iconCodeDefault.replace('[domain]', domain);
-      badgeCodeElement.innerHTML = badgeCodeDefault.replace('[domain]', domain);
-      cardCodeElement.innerHTML = cardCodeDefault.replace('[domain]', domain);
+  <div class="step-item">
+    <h3 class="step-hd">
+      <span class="step-num">2</span>
+      <span class="step-txt">第二步</span>
+    </h3>
+    <p class="step-detail">将联盟的 Badge 添加至您站点的底部。</p>
+  </div>
+</div>
+<h2 class="px-5 mt-10 mb-8 mod-hd">
+  <div class="mod-icon">
+    <svg class="size-5" viewBox="0 0 24 24">
+      <path
+        d="M12.9,2.6l2.3,5c0.1,0.3,0.4,0.5,0.7,0.6l5.2,0.8C22,9,22.3,10,21.7,10.6l-3.8,3.9c-0.2,0.2-0.3,0.6-0.3,0.9   l0.9,5.4c0.1,0.8-0.7,1.5-1.4,1.1l-4.7-2.6c-0.3-0.2-0.6-0.2-0.9,0l-4.7,2.6c-0.7,0.4-1.6-0.2-1.4-1.1l0.9-5.4   c0.1-0.3-0.1-0.7-0.3-0.9l-3.8-3.9C1.7,10,2,9,2.8,8.9l5.2-0.8c0.3,0,0.6-0.3,0.7-0.6l2.3-5C11.5,1.8,12.5,1.8,12.9,2.6z" />
+    </svg>
+  </div>
+  <span class="mod-text">选择Badge</span>
+</h2>
+<div class="input-form">
+  <div class="input-feild">
+    <input id="your-domain" type="text" placeholder="请输入你的米表域名">
+  </div>
+  <button onclick="getYourCode()" class="btn-link">
+    <span class="btn-text">获取代码</span>
+  </button>
+</div>
+<div class="badges">
+  <div class="badge-item">
+    <div class="badge-show">
+      <img src="/assets/img/logo.svg" alt="">
+    </div>
+    <div class="badge-detail">
+      <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
+        href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
+        src=&quot;https://domain.cards/api/icon/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+      <div class="actions">
+        <button class="btn-copy" onclick="copyToClipboard('icon')">
+          <svg class="size-4" viewBox="0 0 24 24">
+            <path
+              d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
+            <path d="M6 12h6v2H6zm0 4h6v2H6z" />
+          </svg>
+          <span>复制代码</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="badge-item">
+    <div class="badge-show">
+      <img src="/assets/img/badge.svg" alt="">
+    </div>
+    <div class="badge-detail">
+      <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
+        href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
+        src=&quot;https://domain.cards/api/badge/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+      <div class="actions">
+        <button class="btn-copy" onclick="copyToClipboard('badge')">
+          <svg class="size-4" viewBox="0 0 24 24">
+            <path
+              d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
+            <path d="M6 12h6v2H6zm0 4h6v2H6z" />
+          </svg>
+          <span>复制代码</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="badge-item">
+    <div class="badge-show">
+      <img width="80%" src="/assets/img/card.svg" alt="">
+    </div>
+    <div class="badge-detail">
+      <div contenteditable="true" class="badge-code">&lt;a title=&quot;米表联盟[Domain.Cards]&quot;
+        href=&quot;https://domain.cards/&quot;&gt;&lt;img height=&quot;18px&quot;
+        src=&quot;https://domain.cards/api/card/[domain]&quot;&gt;&lt;/img&gt;&lt;/a&gt;</div>
+      <div class="actions">
+        <button class="btn-copy" onclick="copyToClipboard('card')">
+          <svg class="size-4" viewBox="0 0 24 24">
+            <path
+              d="M20 2H10c-1.103 0-2 .897-2 2v4H4c-1.103 0-2 .897-2 2v10c0 1.103.897 2 2 2h10c1.103 0 2-.897 2-2v-4h4c1.103 0 2-.897 2-2V4c0-1.103-.897-2-2-2zM4 20V10h10l.002 10H4zm16-6h-4v-4c0-1.103-.897-2-2-2h-4V4h10v10z" />
+            <path d="M6 12h6v2H6zm0 4h6v2H6z" />
+          </svg>
+          <span>复制代码</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+  const iconElement = document.querySelector('.badge-item:nth-child(1) .badge-show img');
+  const badgeElement = document.querySelector('.badge-item:nth-child(2) .badge-show img');
+  const cardElement = document.querySelector('.badge-item:nth-child(3) .badge-show img');
+  const iconCodeElement = document.querySelector('.badge-item:nth-child(1) .badge-code');
+  const badgeCodeElement = document.querySelector('.badge-item:nth-child(2) .badge-code');
+  const cardCodeElement = document.querySelector('.badge-item:nth-child(3) .badge-code');
+  const iconCodeDefault = iconCodeElement.innerHTML;
+  const badgeCodeDefault = badgeCodeElement.innerHTML;
+  const cardCodeDefault = cardCodeElement.innerHTML;
+  function getYourCode() {
+    let domain = document.getElementById('your-domain').value;
+    if (domain === '') {
+      alert('请输入你的米表域名');
+      return;
     }
-    function HTMLDecode(text) { 
-      var temp = document.createElement("div"); 
-      temp.innerHTML = text; 
-      var output = temp.innerText || temp.textContent; 
-      temp = null; 
-      return output; 
-    }
-    function copyToClipboard(type) {
-      let codeElement = type === 'icon' ? iconCodeElement : type === 'badge' ? badgeCodeElement : cardCodeElement;
-      let code = HTMLDecode(codeElement.innerHTML);
-      let input = document.createElement('input');
-      input.setAttribute('readonly', 'readonly');
-      input.setAttribute('value', code);
-      document.body.appendChild(input);
-      input.select();
-      input.setSelectionRange(0, 9999);
-      document.execCommand('copy');
-      document.body.removeChild(input);
-      alert('复制成功');
-    }
-  </script>
-</body>
-
-</html>
+    iconElement.src = `/api/icon/${domain}`;
+    badgeElement.src = `/api/badge/${domain}`;
+    cardElement.src = `/api/card/${domain}`;
+    iconCodeElement.innerHTML = iconCodeDefault.replace('[domain]', domain);
+    badgeCodeElement.innerHTML = badgeCodeDefault.replace('[domain]', domain);
+    cardCodeElement.innerHTML = cardCodeDefault.replace('[domain]', domain);
+  }
+  function HTMLDecode(text) {
+    var temp = document.createElement("div");
+    temp.innerHTML = text;
+    var output = temp.innerText || temp.textContent;
+    temp = null;
+    return output;
+  }
+  function copyToClipboard(type) {
+    let codeElement = type === 'icon' ? iconCodeElement : type === 'badge' ? badgeCodeElement : cardCodeElement;
+    let code = HTMLDecode(codeElement.innerHTML);
+    let input = document.createElement('input');
+    input.setAttribute('readonly', 'readonly');
+    input.setAttribute('value', code);
+    document.body.appendChild(input);
+    input.select();
+    input.setSelectionRange(0, 9999);
+    document.execCommand('copy');
+    document.body.removeChild(input);
+    alert('复制成功');
+  }
+</script>
+{% endblock %}
