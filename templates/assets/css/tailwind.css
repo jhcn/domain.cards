@@ -288,7 +288,7 @@ footer {
 }
 .logo-text,
 .mod-text {
-    @apply font-normal;
+    @apply sm:font-normal;
 }
 
 .logo-text span,
