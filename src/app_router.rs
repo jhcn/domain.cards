@@ -131,7 +131,7 @@ pub async fn show_card(
 
     let tend = tend.unwrap();
 
-    let avatar_img_base64 = match std::fs::read(format!("resources/{}.png", &tend.0.id)) {
+    let avatar_img_base64 = match std::fs::read(format!("resources/avatar/{}.png", &tend.0.id)) {
         Ok(img) => STANDARD.encode(&img),
         Err(_) => {
             "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII".to_string()
