@@ -132,7 +132,7 @@ pub async fn show_card(
     let tend = tend.unwrap();
 
     let avatar_img_base64 = match std::fs::read(format!("resources/avatar/{}.png", &tend.0.id)) {
-        Ok(img) => STANDARD.encode(&img),
+        Ok(img) => STANDARD.encode(img),
         Err(_) => {
             "iVBORw0KGgoAAAANSUhEUgAAAAgAAAAIAQMAAAD+wSzIAAAABlBMVEX///+/v7+jQ3Y5AAAADklEQVQI12P4AIX8EAgALgAD/aNpbtEAAAAASUVORK5CYII".to_string()
         }
@@ -241,7 +241,7 @@ pub async fn home_page(
             .get(k)
             .unwrap_or(&(0, NaiveDateTime::from_timestamp(0, 0)))
             .to_owned();
-        if uv.0 > 0 || rv.0 > 0 {
+        if uv.0 > 0 || rv.0 > 0 || rank_type == "random" {
             rank_vec.push((k.to_owned(), rv.1, uv.0));
             level.insert(k.to_owned(), ctx.get_tend_from_uv_and_rv(uv.0, rv.0).await);
         }
@@ -264,9 +264,18 @@ pub async fn home_page(
                         created_at: now_shanghai(),
                         updated_at: now_shanghai(),
                         membership_id: v.0,
-                        unique_visitor: uv_read.get(&v.0).unwrap().0,
-                        referrer: referrer_read.get(&v.0).unwrap().0,
-                        latest_referrer_at: Some(referrer_read.get(&v.0).unwrap().1),
+                        unique_visitor: match uv_read.get(&v.0) {
+                            Some(uv) => uv.0,
+                            None => 0,
+                        },
+                        referrer: match referrer_read.get(&v.0) {
+                            Some(rv) => rv.0,
+                            None => 0,
+                        },
+                        latest_referrer_at: Some(match referrer_read.get(&v.0) {
+                            Some(rv) => rv.1,
+                            None => NaiveDateTime::from_timestamp(0, 0),
+                        }),
                     },
                     membership: ctx.id2member.get(&v.0).unwrap().to_owned(),
                 });

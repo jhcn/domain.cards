@@ -104,7 +104,7 @@ impl Context {
         headers: &HeaderMap,
     ) -> Result<(Membership, i64, i64, i64), anyhow::Error> {
         let mut member_domain = query_member_domain.to_string();
-        let domain_referrer = Self::get_domain_from_referrer(&headers).unwrap_or("".to_string());
+        let domain_referrer = Self::get_domain_from_referrer(headers).unwrap_or("".to_string());
         if v_type.is_some_and(|v| v == VisitorType::Referer) {
             if domain_referrer.eq(&*SYSTEM_DOMAIN) {
                 return Err(anyhow!("system domain"));
@@ -180,7 +180,7 @@ impl Context {
                 let _ = self.visitor_tx.send(
                     serde_json::json!(VistEvent {
                         ip: IPV6_MASK
-                            .replace_all(&IPV4_MASK.replace_all(&ip, "$1****$2"), "$1****$2")
+                            .replace_all(&IPV4_MASK.replace_all(ip, "$1****$2"), "$1****$2")
                             .to_string(),
                         country: country.to_string(),
                         member,

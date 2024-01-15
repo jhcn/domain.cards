@@ -1,4 +1,4 @@
-use axum::{extract::Extension, http, routing::get, Router};
+use axum::{extract::Extension, routing::get, Router};
 use chrono::{NaiveDateTime, NaiveTime};
 use diesel_migrations::{embed_migrations, EmbeddedMigrations, MigrationHarness};
 use domaincards::{
