@@ -1431,12 +1431,12 @@ footer {
   text-decoration-line: underline;
 }
 
-.logo-text,
-.mod-text {
-  font-weight: 400;
-}
-
 @media (max-width: 639px) {
+  .logo-text,
+.mod-text {
+    font-weight: 400;
+  }
+
   .logo-text span,
 .nav .btn-text,
 .mod-text span,
